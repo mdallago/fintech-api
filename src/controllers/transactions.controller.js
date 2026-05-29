@@ -34,6 +34,9 @@ export async function createTransaction(req, res) {
     [originUserId, targetUserId, amount]
   );
 
+
+  //TODO Auto approve
+
   res.status(201).json({ data: rows[0] });
 }
 
