@@ -39,6 +39,19 @@ The API will be available at `http://localhost:3000`.
 - Tests
 - TODO'S
 
+### Test Cases
+ - Create a transaction with a non existing origin user
+ - Create a transaction with a non existing target user
+ - Create a transaction with an amount greater than the balance
+ - Create two concurrent transactions for the same user
+ - Auto approve
+ - Manual approval
+ - Reject transaction
+ - Request with missing mandatory fields
+ - Reject a non pending transaction
+ - Approve a non pending transaction
+ - Get transactions will not include other users transactions
+
 ## License
 
 MIT
