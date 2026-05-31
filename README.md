@@ -33,11 +33,9 @@ The API will be available at `http://localhost:3000`.
 
 ---
 
-## Pending
+## Swagger
 
-- Swagger
-- Tests
-- TODO'S
+http://localhost:3000/api-docs/
 
 ### Test Cases
  - Create a transaction with a non existing origin user
