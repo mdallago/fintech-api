@@ -4,9 +4,9 @@ A minimal fintech api to create, approve and reject transactions
 
 ---
 
-[!IMPORTANT]
-A new version of the code with the missing things is available in the following PR:
-https://github.com/mdallago/fintech-api/pull/1
+> [!IMPORTANT]
+> A new version of the code with the missing things is available in the following PR:
+> https://github.com/mdallago/fintech-api/pull/1
 
 ## Quick start
 
