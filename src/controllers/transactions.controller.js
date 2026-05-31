@@ -1,19 +1,19 @@
 import { query, getClient } from '../db/pool.js';
 
+//TODO move business logic to a service layer
 export async function getTransactions(req, res) {
   const { userId } = req.query;
 
-  let text = 'SELECT * FROM transactions'; //TODO specify the columns explicitly
-  const values = [];
-  
-  if (userId) {
-    values.push(userId);
-    text += ' WHERE origin_user_id = $1';
+  if (!userId) {
+    return res.status(400).json({ error: '`userId` is required' });
   }
 
+  let text = 'SELECT * FROM transactions WHERE origin_user_id = $1'; //TODO specify the columns explicitly
   text += ' ORDER BY created_at DESC';
 
-  const { rows } = await query(text, values);
+  //TODO pagination
+
+  const { rows } = await query(text, [userId]);
   res.json({ data: rows, count: rows.length });
 }
 
@@ -24,8 +24,17 @@ export async function createTransaction(req, res) {
     return res.status(400).json({ error: '`originUserId`, `targetUserId`, and `amount` are required' });
   }
 
-  //TODO validate users exist and amount is positive
-  //TODO validate origin user has sufficient balance
+  const client = await getClient();
+
+  const { rows: userRows } = await client.query(
+      'SELECT * FROM users WHERE id = $1',
+      [originUserId]
+    );
+
+    if (!userRows.length) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
   
   const { rows } = await query(
     `INSERT INTO transactions (origin_user_id, target_user_id, amount, state)
@@ -34,8 +43,10 @@ export async function createTransaction(req, res) {
     [originUserId, targetUserId, amount]
   );
 
-
-  //TODO Auto approve
+  if (Number(amount) < 50000) {
+    await approveTransaction({ params: { id: rows[0].id } }, res);
+    return;
+  }
 
   res.status(201).json({ data: rows[0] });
 }
@@ -96,11 +107,12 @@ export async function approveTransaction(req, res) {
 
     const originUser = userRows[0];
 
-    if (originUser.balance < transaction.amount) {
+    if (Number(originUser.balance) < Number(transaction.amount)) {
       await client.query('ROLLBACK');
       return res.status(409).json({
         error: 'Insufficient balance',
         available: originUser.balance,
+        tx_amount: transaction.amount,
       });
     }
 
@@ -117,12 +129,12 @@ export async function approveTransaction(req, res) {
     const destinationUser = destinationUserRows[0];
 
     await client.query(
-      'UPDATE users SET balance = balance - $1, WHERE id = $2',
+      'UPDATE users SET balance = balance - $1 WHERE id = $2',
       [transaction.amount, transaction.origin_user_id]
     );
 
     await client.query(
-      'UPDATE users SET balance = balance + $1, WHERE id = $2',
+      'UPDATE users SET balance = balance + $1 WHERE id = $2',
       [transaction.amount, transaction.target_user_id]
     );
 
