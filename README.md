@@ -6,8 +6,6 @@ A minimal fintech api to create, approve and reject transactions
 
 ## Quick start
 
-### Option A — Docker Compose
-
 ```bash
 # Clone and enter the repo
 git clone <your-repo-url>
@@ -37,7 +35,17 @@ The API will be available at `http://localhost:3000`.
 
 http://localhost:3000/api-docs/
 
-### Test Cases
+## Tests
+
+```bash
+# Start DB
+docker compose up postgres
+
+# Run tests
+npm run test
+```
+
+### Test Cases (Some are pending)
  - Create a transaction with a non existing origin user
  - Create a transaction with a non existing target user
  - Create a transaction with an amount greater than the balance
