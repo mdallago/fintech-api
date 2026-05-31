@@ -66,6 +66,7 @@ npm run test
  - Specify columns explicitly in SELECT queries
  - Return updated transaction in approveTransaction function
  - Add more test cases
+ - Add CI/CD github action with a proper pipeline (test, audit, etc)
 
 ## License
 
