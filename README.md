@@ -50,6 +50,15 @@ http://localhost:3000/api-docs/
  - Approve a non pending transaction
  - Get transactions will not include other users transactions
 
+## Pending
+
+ - Add pagination in GET Transaction endpoint
+ - Move business logic to a service layer
+ - Move magic number to a config file or environment variable
+ - Specify columns explicitly in SELECT queries
+ - Return updated transaction in approveTransaction function
+ - Add more test cases
+
 ## License
 
 MIT

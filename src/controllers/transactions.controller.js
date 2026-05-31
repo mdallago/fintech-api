@@ -1,6 +1,7 @@
 import { query, getClient } from '../db/pool.js';
 
 //TODO move business logic to a service layer
+
 export async function getTransactions(req, res) {
   const { userId } = req.query;
 
@@ -26,7 +27,8 @@ export async function createTransaction(req, res) {
 
   const client = await getClient();
 
-  const { rows: userRows } = await client.query(
+  try {
+    const { rows: userRows } = await client.query(
       'SELECT * FROM users WHERE id = $1',
       [originUserId]
     );
@@ -35,20 +37,24 @@ export async function createTransaction(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-  
-  const { rows } = await query(
-    `INSERT INTO transactions (origin_user_id, target_user_id, amount, state)
-     VALUES ($1, $2, $3, 'pending')
-     RETURNING *`,
-    [originUserId, targetUserId, amount]
-  );
+    const { rows } = await query(
+      `INSERT INTO transactions (origin_user_id, target_user_id, amount, state)
+      VALUES ($1, $2, $3, 'pending')
+      RETURNING *`,
+      [originUserId, targetUserId, amount]
+    );
 
-  if (Number(amount) < 50000) {
-    await approveTransaction({ params: { id: rows[0].id } }, res);
-    return;
+    // Move magic number to a config file or environment variable
+    if (Number(amount) < 50000) {
+      await approveTransaction({ params: { id: rows[0].id } }, res);
+      return;
+    }
+
+    res.status(201).json({ data: rows[0] });
   }
-
-  res.status(201).json({ data: rows[0] });
+  finally {
+    client.release();
+  }
 }
 
 export async function rejectTransaction(req, res) {
@@ -145,6 +151,7 @@ export async function approveTransaction(req, res) {
 
     await client.query('COMMIT');
 
+    //TODO return updated transaction instead of the one we read at the beginning of the function
     res.json({ data: transactionsRows[0] });
   } catch (err) {
     await client.query('ROLLBACK');
