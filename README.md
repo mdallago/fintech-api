@@ -67,6 +67,7 @@ npm run test
  - Return updated transaction in approveTransaction function
  - Add more test cases
  - Add CI/CD github action with a proper pipeline (test, audit, etc)
+ - Reservation pattern, full balance and blocked balance
 
 ## License
 
