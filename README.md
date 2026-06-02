@@ -4,13 +4,7 @@ A minimal fintech api to create, approve and reject transactions
 
 ---
 
-> [!IMPORTANT]
-> A new version of the code with the missing things is available in the following PR:
-> https://github.com/mdallago/fintech-api/pull/1
-
 ## Quick start
-
-### Option A — Docker Compose
 
 ```bash
 # Clone and enter the repo
@@ -37,13 +31,21 @@ The API will be available at `http://localhost:3000`.
 
 ---
 
-## Pending
+## Swagger
 
-- Swagger
-- Tests
-- TODO'S
+http://localhost:3000/api-docs/
 
-### Test Cases
+## Tests
+
+```bash
+# Start DB
+docker compose up postgres
+
+# Run tests
+npm run test
+```
+
+### Test Cases (Some are pending)
  - Create a transaction with a non existing origin user
  - Create a transaction with a non existing target user
  - Create a transaction with an amount greater than the balance
@@ -55,6 +57,18 @@ The API will be available at `http://localhost:3000`.
  - Reject a non pending transaction
  - Approve a non pending transaction
  - Get transactions will not include other users transactions
+
+## Pending
+
+ - Add pagination in GET Transaction endpoint
+ - Move business logic to a service layer
+ - Move magic number to a config file or environment variable
+ - Specify columns explicitly in SELECT queries
+ - Return updated transaction in approveTransaction function
+ - Add more test cases
+ - Add CI/CD github action with a proper pipeline (test, audit, etc)
+ - Reservation pattern, full balance and blocked balance
+ - Fix Deadlock in user row blocking (only when we have concurrent transactions switching origin and target user)
 
 ## License
 
