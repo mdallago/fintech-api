@@ -68,6 +68,7 @@ npm run test
  - Add more test cases
  - Add CI/CD github action with a proper pipeline (test, audit, etc)
  - Reservation pattern, full balance and blocked balance
+ - Fix Deadlock in user row blocking (only when we have concurrent transactions switching origin and target user)
 
 ## License
 
